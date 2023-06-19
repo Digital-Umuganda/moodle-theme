@@ -1,1 +1,3 @@
 # ting
+
+This is a ***Moodle*** **theme** that inherits its main functionalities from the **Boost theme** and adds an additional bar that is located below the top navigation bar. The bar contains a right menu that contains a dropdown for languages and a popover/dropdown that explains what the dropdown is meant for. All of the draft implementations of the mockup use ***Bootstrap 4*** theming because it's what the default ***Moodle*** theme, which is the **Boost theme**, uses.
