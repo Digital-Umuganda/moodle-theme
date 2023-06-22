@@ -85,6 +85,17 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 
+$selectedLanguages = get_config('filter_translations', 'languages');
+if (strstr($selectedLanguages, ',')) {
+    $selectedLanguagesArray = explode(',', $selectedLanguages);
+} else {
+    $selectedLanguagesArray = [$selectedLanguages];
+}
+
+foreach ($selectedLanguagesArray as $key => $selectedLanguage) {
+    $selectedLanguagesArray[] = ['name' => $selectedLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$selectedLanguage]];
+}
+
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
@@ -104,7 +115,8 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'contentlanguages' => $selectedLanguagesArray
 ];
 
 echo $OUTPUT->render_from_template('theme_ting/drawers', $templatecontext);

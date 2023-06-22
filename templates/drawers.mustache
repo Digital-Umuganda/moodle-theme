@@ -109,13 +109,12 @@ Example context (json):
                                     English
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    {{#contentlanguages}}
+                                    <a class="dropdown-item" href="#">{{lang}}</a>
+                                    {{/contentlanguages}}
                                 </div>
                             </li>
-                            <li class="nav-item dropdown mr-6">
+                            {{! <li class="nav-item dropdown mr-6">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                                     aria-expanded="false">
                                     <i class="fa fa-info"></i>
@@ -128,8 +127,8 @@ Example context (json):
                                         And this is more example text.
                                     </p>
                                 </div>
-                            </li>
-                            {{! <li class="nav-item mr-4">
+                            </li> }}
+                            <li class="nav-item mr-4">
                                 <span class="nav-link">
                                     <a class="btn btn-link p-0" role="button" data-container="body"
                                         data-toggle="popover" data-trigger="click" data-placement="bottom"
@@ -141,7 +140,7 @@ Example context (json):
                                             id="yui_3_17_2_1_1687210317552_52"></i>
                                     </a>
                                 </span>
-                            </li> }}
+                            </li>
                         </ul>
                     </div>
                 </nav>
