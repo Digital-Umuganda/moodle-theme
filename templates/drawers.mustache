@@ -1,242 +1,263 @@
 {{!
-This file is part of Moodle - http://moodle.org/
-
-Moodle is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moodle is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moodle. If not, see
-<http: //www.gnu.org/licenses />.
-}}
-{{!
-@template theme_boost/drawers
-
-Boost drawer template.
-
-Context variables required for this template:
-* sitename - The name of the site
-* output - The core renderer for the page
-* bodyattributes - attributes for the body tag as a string of html attributes
-* sidepreblocks - HTML for the blocks
-* hasblocks - true if there are blocks on this page
-* courseindexopen - true if the nav drawer should be open on page load
-* regionmainsettingsmenu - HTML for the region main settings menu
-* hasregionmainsettingsmenu - There is a region main settings menu on this page.
-
-Example context (json):
-{
-"sitename": "Moodle",
-"output": {
-"doctype": "
-<!DOCTYPE html>",
-"page_title": "Test page",
-"favicon": "favicon.ico",
-"main_content": "<h1>Headings make html validators happier</h1>"
-},
-"bodyattributes":"",
-"sidepreblocks": "<h2>Blocks html goes here</h2>",
-"hasblocks":true,
-"courseindexopen": true,
-"navdraweropen": false,
-"blockdraweropen": true,
-"regionmainsettingsmenu": "",
-"hasregionmainsettingsmenu": false,
-"addblockbutton": ""
-}
-}}
-{{> theme_boost/head }}
-
-<body {{{ bodyattributes }}}>
-    {{> core/local/toast/wrapper}}
-    <div id="page-wrapper" class="d-print-block">
-        {{{ output.standard_top_of_body_html }}}
-
-        {{> theme_boost/navbar }}
-        {{#courseindex}}
-        {{< theme_boost/drawer }} {{$id}}theme_boost-drawers-courseindex{{/id}} {{$drawerclasses}}drawer drawer-left
-            {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}} {{$drawercontent}} {{{courseindex}}}
-            {{/drawercontent}} {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
-            {{$drawerstate}}show-drawer-left{{/drawerstate}} {{$tooltipplacement}}right{{/tooltipplacement}}
-            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}} {{/ theme_boost/drawer}}
-            {{/courseindex}} {{#hasblocks}} {{< theme_boost/drawer }} {{$id}}theme_boost-drawers-blocks{{/id}}
-            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
-            {{$drawercontent}} <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
-            {{{ addblockbutton }}}
-            {{{ sidepreblocks }}}
-            </section>
-            {{/drawercontent}}
-            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
-            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
-            {{$drawerstate}}show-drawer-right{{/drawerstate}}
-            {{$tooltipplacement}}left{{/tooltipplacement}}
-            {{$drawercloseonresize}}1{{/drawercloseonresize}}
-            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
-            {{/ theme_boost/drawer}}
-            {{/hasblocks}}
-            <div id="page" data-region="mainpage" data-usertour="scroller"
-                class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
-                <nav class="navbar navbar-expand-lg navbar-light">
-                    {{! <a class="navbar-brand" href="#">Navbar</a> }}
-                    <button class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto ml-6">
-                            <li class="nav-item active ml-6">
-                                <a class="nav-link" href="#">Menu 1 <span class="sr-only">(current)</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Menu 2</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Menu 3</a>
-                            </li>
-                        </ul>
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <span class="nav-link disabled">Select course language:<span />
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                    English
-                                </a>
-                                <div class="dropdown-menu">
-                                    {{#contentlanguages}}
-                                    <a class="dropdown-item" href="#">{{lang}}</a>
-                                    {{/contentlanguages}}
-                                </div>
-                            </li>
-                            {{! <li class="nav-item dropdown mr-6">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <i class="fa fa-info"></i>
-                                </a>
-                                <div class="dropdown-menu p-4 text-muted mr-6" style="max-width: 200px;">
-                                    <p>
-                                        Some example text that's free-flowing within the dropdown menu.
-                                    </p>
-                                    <p class="mb-0">
-                                        And this is more example text.
-                                    </p>
-                                </div>
-                            </li> }}
-                            <li class="nav-item mr-4">
-                                <span class="nav-link">
-                                    <a class="btn btn-link p-0" role="button" data-container="body"
-                                        data-toggle="popover" data-trigger="click" data-placement="bottom"
-                                        data-content="<div class=&quot;no-overflow&quot;><p>Highlight a word or paragraph for translations.</p><div class=&quot;d-flex flex-row-reverse&quot;><div class=&quot;btn btn-link font-weight-bold text-black&quot; >GOT IT</div></div></div>"
-                                        data-html="true" tabindex="0" data-trigger="focus" data-original-title=""
-                                        title="" id="yui_3_17_2_1_1687210317552_53">
-                                        <i class="icon fa fa-question-circle text-info fa-fw "
-                                            title="Help with Overview" role="img" aria-label="Help with Overview"
-                                            id="yui_3_17_2_1_1687210317552_52"></i>
+    This file is part of Moodle - http://moodle.org/
+    
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with Moodle. If not, see
+    <http: //www.gnu.org/licenses />.
+    }}
+    {{!
+    @template theme_boost/drawers
+    
+    Boost drawer template.
+    
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * courseindexopen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+    
+    Example context (json):
+    {
+    "sitename": "Moodle",
+    "output": {
+    "doctype": "
+    <!DOCTYPE html>",
+    "page_title": "Test page",
+    "favicon": "favicon.ico",
+    "main_content": "<h1>Headings make html validators happier</h1>"
+    },
+    "bodyattributes":"",
+    "sidepreblocks": "<h2>Blocks html goes here</h2>",
+    "hasblocks":true,
+    "courseindexopen": true,
+    "navdraweropen": false,
+    "blockdraweropen": true,
+    "regionmainsettingsmenu": "",
+    "hasregionmainsettingsmenu": false,
+    "addblockbutton": ""
+    }
+    }}
+    {{> theme_boost/head }}
+    
+    <body {{{ bodyattributes }}}>
+        {{> core/local/toast/wrapper}}
+        <div id="page-wrapper" class="d-print-block">
+            {{{ output.standard_top_of_body_html }}}
+    
+            {{> theme_boost/navbar }}
+            {{#courseindex}}
+            {{< theme_boost/drawer }} {{$id}}theme_boost-drawers-courseindex{{/id}} {{$drawerclasses}}drawer drawer-left
+                {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}} {{$drawercontent}} {{{courseindex}}}
+                {{/drawercontent}} {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+                {{$drawerstate}}show-drawer-left{{/drawerstate}} {{$tooltipplacement}}right{{/tooltipplacement}}
+                {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}} {{/ theme_boost/drawer}}
+                {{/courseindex}} {{#hasblocks}} {{< theme_boost/drawer }} {{$id}}theme_boost-drawers-blocks{{/id}}
+                {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+                {{$drawercontent}} <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                {{{ addblockbutton }}}
+                {{{ sidepreblocks }}}
+                </section>
+                {{/drawercontent}}
+                {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+                {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+                {{$drawerstate}}show-drawer-right{{/drawerstate}}
+                {{$tooltipplacement}}left{{/tooltipplacement}}
+                {{$drawercloseonresize}}1{{/drawercloseonresize}}
+                {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+                {{/ theme_boost/drawer}}
+                {{/hasblocks}}
+                <div id="page" data-region="mainpage" data-usertour="scroller"
+                    class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        {{! <a class="navbar-brand" href="#">Navbar</a> }}
+                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+    
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto ml-6">
+                                <li class="nav-item active ml-6">
+                                    <a class="nav-link" href="#">Menu 1 <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Menu 2</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Menu 3</a>
+                                </li>
+                            </ul>
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <span class="nav-link disabled">Select course language:<span />
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        {{{contentlanguage.lang}}}
                                     </a>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-                <div id="topofscroll" class="main-inner">
-                    <div class="drawer-toggles d-flex">
-                        {{#courseindex}}
-                        <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
-                            <button class="btn icon-no-margin" data-toggler="drawers" data-action="toggle"
-                                data-target="theme_boost-drawers-courseindex" data-toggle="tooltip"
-                                data-placement="right" title="{{#str}}opendrawerindex, core{{/str}}">
-                                <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
-                                {{#pix}} t/index_drawer, moodle {{/pix}}
-                            </button>
-                        </div>
-                        {{/courseindex}}
-                        {{#hasblocks}}
-                        <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
-                            <button class="btn icon-no-margin" data-toggler="drawers" data-action="toggle"
-                                data-target="theme_boost-drawers-blocks" data-toggle="tooltip" data-placement="right"
-                                title="{{#str}}opendrawerblocks, core{{/str}}">
-                                <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
-                                <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
-                                <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
-                            </button>
-                        </div>
-                        {{/hasblocks}}
-                    </div>
-                    {{{ output.full_header }}}
-                    {{#secondarymoremenu}}
-                    <div class="secondary-navigation d-print-none">
-                        {{> core/moremenu}}
-                    </div>
-                    {{/secondarymoremenu}}
-                    <div id="page-content" class="pb-3 d-print-block">
-                        <div id="region-main-box">
-                            {{#hasregionmainsettingsmenu}}
-                            <div id="region-main-settings-menu" class="d-print-none">
-                                <div> {{{ regionmainsettingsmenu }}} </div>
-                            </div>
-                            {{/hasregionmainsettingsmenu}}
-                            <section id="region-main" aria-label="{{#str}}content{{/str}}">
-
-                                {{#hasregionmainsettingsmenu}}
-                                <div class="region_main_settings_menu_proxy"></div>
-                                {{/hasregionmainsettingsmenu}}
-                                {{{ output.course_content_header }}}
-                                {{#headercontent}}
-                                {{> core/activity_header }}
-                                {{/headercontent}}
-                                {{#overflow}}
-                                <div class="container-fluid tertiary-navigation">
-                                    <div class="navitem">
-                                        {{> core/url_select}}
+                                    <div class="dropdown-menu content-language">
+                                        {{#contentlanguages}}
+                                        <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-lang="{{name}}">{{lang}}</a>
+                                        {{/contentlanguages}}
                                     </div>
+                                </li>
+                                {{! <li class="nav-item dropdown mr-6">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                    <div class="dropdown-menu p-4 text-muted mr-6" style="max-width: 200px;">
+                                        <p>
+                                            Some example text that's free-flowing within the dropdown menu.
+                                        </p>
+                                        <p class="mb-0">
+                                            And this is more example text.
+                                        </p>
+                                    </div>
+                                </li> }}
+                                <li class="nav-item mr-4">
+                                    <span class="nav-link">
+                                        <a class="btn btn-link p-0" role="button" data-container="body"
+                                            data-toggle="popover" data-trigger="click" data-placement="bottom"
+                                            data-content="<div class=&quot;no-overflow&quot;><p>Highlight a word or paragraph for translations.</p><div class=&quot;d-flex flex-row-reverse&quot;><div class=&quot;btn btn-link font-weight-bold text-black&quot; >GOT IT</div></div></div>"
+                                            data-html="true" tabindex="0" data-trigger="focus" data-original-title=""
+                                            title="">
+                                            <i class="icon fa fa-question-circle text-info fa-fw "
+                                                title="Help with Overview" role="img" aria-label="Help with Overview"
+                                                id="yui_3_17_2_1_1687210317552_52"></i>
+                                        </a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div id="topofscroll" class="main-inner">
+                        <div class="drawer-toggles d-flex">
+                            {{#courseindex}}
+                            <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
+                                <button class="btn icon-no-margin" data-toggler="drawers" data-action="toggle"
+                                    data-target="theme_boost-drawers-courseindex" data-toggle="tooltip"
+                                    data-placement="right" title="{{#str}}opendrawerindex, core{{/str}}">
+                                    <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
+                                    {{#pix}} t/index_drawer, moodle {{/pix}}
+                                </button>
+                            </div>
+                            {{/courseindex}}
+                            {{#hasblocks}}
+                            <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
+                                <button class="btn icon-no-margin" data-toggler="drawers" data-action="toggle"
+                                    data-target="theme_boost-drawers-blocks" data-toggle="tooltip" data-placement="right"
+                                    title="{{#str}}opendrawerblocks, core{{/str}}">
+                                    <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
+                                    <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                                    <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
+                                </button>
+                            </div>
+                            {{/hasblocks}}
+                        </div>
+                        {{{ output.full_header }}}
+                        {{#secondarymoremenu}}
+                        <div class="secondary-navigation d-print-none">
+                            {{> core/moremenu}}
+                        </div>
+                        {{/secondarymoremenu}}
+                        <div id="page-content" class="pb-3 d-print-block">
+                            <div id="region-main-box">
+                                {{#hasregionmainsettingsmenu}}
+                                <div id="region-main-settings-menu" class="d-print-none">
+                                    <div> {{{ regionmainsettingsmenu }}} </div>
                                 </div>
-                                {{/overflow}}
-                                {{{ output.main_content }}}
-                                {{{ output.activity_navigation }}}
-                                {{{ output.course_content_footer }}}
-
-                            </section>
+                                {{/hasregionmainsettingsmenu}}
+                                <section id="region-main" aria-label="{{#str}}content{{/str}}">
+    
+                                    {{#hasregionmainsettingsmenu}}
+                                    <div class="region_main_settings_menu_proxy"></div>
+                                    {{/hasregionmainsettingsmenu}}
+                                    {{{ output.course_content_header }}}
+                                    {{#headercontent}}
+                                    {{> core/activity_header }}
+                                    {{/headercontent}}
+                                    {{#overflow}}
+                                    <div class="container-fluid tertiary-navigation">
+                                        <div class="navitem">
+                                            {{> core/url_select}}
+                                        </div>
+                                    </div>
+                                    {{/overflow}}
+                                    {{{ output.main_content }}}
+                                    {{{ output.activity_navigation }}}
+                                    {{{ output.course_content_footer }}}
+    
+                                </section>
+                            </div>
                         </div>
                     </div>
+                    {{> theme_boost/footer }}
                 </div>
-                {{> theme_boost/footer }}
-            </div>
-            {{{ output.standard_after_main_region_html }}}
-    </div>
-    <style>
-        #page.drawers {
-            padding-left: 0rem;
-            padding-right: 0rem;
-        }
-
-        @media (min-width: 992px) {
-            #page.drawers.show-drawer-left {
-                margin-left: 269px;
-                margin-right: 0;
-                padding-left: 1rem;
+                {{{ output.standard_after_main_region_html }}}
+                <input type="hidden" id="url" value="{{{setlanguageurl}}}">
+        </div>
+        <style>
+            #page.drawers {
+                padding-left: 0rem;
+                padding-right: 0rem;
             }
-        }
-
-        .nav-item.dropdown.mr-4::after {
-            display: none;
-        }        
-    </style>
-</body>
-
-</html>
-{{#js}}
-M.util.js_pending('theme_boost/loader');
-require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
-Drawer.init();
-M.util.js_complete('theme_boost/loader');
-});
-{{/js}}
+    
+            @media (min-width: 992px) {
+                #page.drawers.show-drawer-left {
+                    margin-left: 269px;
+                    margin-right: 0;
+                    padding-left: 1rem;
+                }
+            }
+    
+            .nav-item.dropdown.mr-4::after {
+                display: none;
+            }
+        </style>
+        <script>
+            var contentLanguageEl = document.getElementsByClassName('content-language');
+            contentLanguageEl[0].onclick = function (ev) {
+                var target = ev.target;
+                var dropdownMenu = target.parentNode;
+                var dropdown = dropdownMenu.parentNode;
+                var dropdownTitle = dropdown.children[0];
+                dropdownTitle.innerText = target.innerText;
+                // console.log({ ev, target: ev.target, parent: ev.target.parentNode, title: dropdown.children[0] })
+    
+                dropdownMenu.children.forEach(menu => {
+                    if (menu.classList.contains('active')) {
+                        menu.classList.remove('active')
+                    }
+                });
+    
+                target.classList.add('active');
+                location.assign(document.getElementById('url').value + '?lang=' + target.getAttribute('data-lang') + "&redirectto=" + location.href);
+            }
+        </script>
+    </body>
+    
+    </html>
+    {{#js}}
+    M.util.js_pending('theme_boost/loader');
+    require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+    });
+    {{/js}}

@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A drawer based layout for the ting theme.
+ * A drawer based layout for the atingi theme.
  *
- * @package   theme_ting
+ * @package   theme_atingi
  * @copyright 2021 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
+
+use moodle_url;
+// print_r(['dir' => new moodle_url('/filter/translations/setcontentlanguage.php')]);
 
 // Add block button in editing mode.
 $addblockbutton = $OUTPUT->addblockbutton();
@@ -86,15 +88,25 @@ $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 
 $selectedLanguages = get_config('filter_translations', 'languages');
+
 if (strstr($selectedLanguages, ',')) {
     $selectedLanguagesArray = explode(',', $selectedLanguages);
 } else {
     $selectedLanguagesArray = [$selectedLanguages];
 }
 
-foreach ($selectedLanguagesArray as $key => $selectedLanguage) {
-    $selectedLanguagesArray[] = ['name' => $selectedLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$selectedLanguage]];
+$selectedLanguage = get_config('filter_translations', 'contentlanguage');
+
+foreach ($selectedLanguagesArray as $key => $selected) {
+    $array = ['name' => $selected, 'lang' => get_string_manager()->get_list_of_languages()[$selected], 'active' => false];
+    if ($selectedLanguage == $selected) {
+        $array['active'] = true;
+    }
+    $selectedLanguagesArray[] =  $array;
 }
+
+$contentLanguage = ['name' => $selectedLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$selectedLanguage]];
+$setLanguageUrl = new moodle_url('/filter/translations/setcontentlanguage.php');
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -116,7 +128,9 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
-    'contentlanguages' => $selectedLanguagesArray
+    'contentlanguages' => $selectedLanguagesArray,
+    'contentlanguage' => $contentLanguage,
+    'setlanguageurl' => $setLanguageUrl
 ];
 
-echo $OUTPUT->render_from_template('theme_ting/drawers', $templatecontext);
+echo $OUTPUT->render_from_template('theme_atingi/drawers', $templatecontext);
