@@ -113,24 +113,11 @@
                                     </a>
                                     <div class="dropdown-menu content-language">
                                         {{#contentlanguages}}
-                                        <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-lang="{{name}}">{{lang}}</a>
+                                        <a class="dropdown-item {{#active}}active{{/active}}" href="#"
+                                            data-lang="{{name}}">{{lang}}</a>
                                         {{/contentlanguages}}
                                     </div>
                                 </li>
-                                {{! <li class="nav-item dropdown mr-6">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fa fa-info"></i>
-                                    </a>
-                                    <div class="dropdown-menu p-4 text-muted mr-6" style="max-width: 200px;">
-                                        <p>
-                                            Some example text that's free-flowing within the dropdown menu.
-                                        </p>
-                                        <p class="mb-0">
-                                            And this is more example text.
-                                        </p>
-                                    </div>
-                                </li> }}
                                 <li class="nav-item mr-4">
                                     <span class="nav-link">
                                         <a class="btn btn-link p-0" role="button" data-container="body"
@@ -212,6 +199,48 @@
                 </div>
                 {{{ output.standard_after_main_region_html }}}
                 <input type="hidden" id="url" value="{{{setlanguageurl}}}">
+                <input type="hidden" id="systemlanguage" value="{{{systemlanguage}}}">
+                <input type="hidden" id="contentlanguage" value="{{{contentlanguage.name}}}">
+                <div class="custom-popup" id="custom-popup" style="min-height: 4rem;;">
+                    <div style="display: flex; height: 3rem; border-bottom: 1px solid #E0E0E0;">
+                        <div style="flex: 3; align-self: center; margin-left: 10px;">
+                            <span class="text-muted"><img src="{{languageicon}}" alt=""
+                                    style="height: 18px; width: 18px; color: red;"> Translated: </span>
+                            <div id="fromlanguage" class="dropdown" style="z-index: inherit; max-height:50px;" hidden>
+                                <span style="color: red;" class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    {{{contentlanguage.lang}}}
+                                </span>
+                                <div class="dropdown-menu" id="fromlanguagedropdown" aria-labelledby="dropdownMenu2"
+                                    style="max-height:150px; overflow-x:hidden; overflow-y:scroll">
+                                    {{#contentlanguages}}
+                                    <a class="dropdown-item {{#active}}active{{/active}}" href="#"
+                                        data-lang="{{name}}">{{lang}}</a>
+                                    {{/contentlanguages}}
+                                </div>
+                            </div>
+                            <div id="tolanguage" class="dropdown" style="z-index: inherit;">
+                                <span style="color: red;" class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    {{{contentlanguage.lang}}}
+                                </span>
+                                <div class="dropdown-menu" id="tolanguagedropdown" aria-labelledby="dropdownMenu2">
+                                    {{#contentlanguages}}
+                                    <a class="dropdown-item {{#active}}active{{/active}}" href="#"
+                                        data-lang="{{name}}">{{lang}}</a>
+                                    {{/contentlanguages}}
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div id="close-button" style="align-self: center; margin-right: 10px; cursor:pointer;">
+                            <img src="{{expandicon}}" alt="" style="height: 18px; width: 18px; color: red;">
+                        </div>
+                    </div>
+                    <div id="translation-container" style="display: flex; padding: 10px;">
+                        <p style="flex:1; align-self: center;" id="current-translation">Translating...></i></p>
+                    </div>
+                </div>
         </div>
         <style>
             #page.drawers {
@@ -230,16 +259,47 @@
             .nav-item.dropdown.mr-4::after {
                 display: none;
             }
+    
+            /* The popup form - hidden by default */
+            .custom-popup {
+                display: none;
+                position: absolute;
+                border: 1px solid #E0E0E0;
+                z-index: 30;
+                box-shadow: 3px .25px 0.4em #dbdbdb, -2px 0px 0.4em #e2e2e2;
+                border-radius: 10px;
+                background-color: #ffffff;
+                height: 10rem;
+                width: 20rem;
+            }
+    
+            .custom-popup::before {
+                content: "";
+                width: 20px;
+                height: 20px;
+                transform: rotate(-45deg);
+                background: #fff;
+                position: absolute;
+                border-top: 1px solid #dbdbdb;
+                border-right: 1px solid #dbdbdb;
+                z-index: -100;
+                top: -10px;
+                left: calc(10% - 10px);
+            }
+    
+            #fromlanguage,
+            #tolanguage {
+                display: inline;
+            }
         </style>
         <script>
-            var contentLanguageEl = document.getElementsByClassName('content-language');
-            contentLanguageEl[0].onclick = function (ev) {
+            function setDropdownMenuAsActive(ev) {
                 var target = ev.target;
                 var dropdownMenu = target.parentNode;
                 var dropdown = dropdownMenu.parentNode;
                 var dropdownTitle = dropdown.children[0];
                 dropdownTitle.innerText = target.innerText;
-                // console.log({ ev, target: ev.target, parent: ev.target.parentNode, title: dropdown.children[0] })
+                console.log({ ev, target: ev.target, parent: ev.target.parentNode, title: dropdown.children[0] })
     
                 dropdownMenu.children.forEach(menu => {
                     if (menu.classList.contains('active')) {
@@ -248,7 +308,95 @@
                 });
     
                 target.classList.add('active');
-                location.assign(document.getElementById('url').value + '?lang=' + target.getAttribute('data-lang') + "&redirectto=" + location.href);
+            }
+    
+            var contentLanguageEl = document.getElementsByClassName('content-language');
+    
+            contentLanguageEl[0].onclick = function (ev) {
+                setDropdownMenuAsActive(ev);
+                location.assign(document.getElementById('url').value + '?lang=' + ev.target.getAttribute('data-lang') + "&redirectto=" + location.href);
+            }
+    
+            document.getElementById('fromlanguagedropdown').onclick = function (ev) {
+                setDropdownMenuAsActive(ev);
+            }
+    
+            document.getElementById('tolanguagedropdown').onclick = function (ev) {
+                setDropdownMenuAsActive(ev);
+                translate();
+            }
+    
+            function getSelectionText() {
+                var text = "";
+                if (window.getSelection) {
+                    text = window.getSelection().toString();
+                } else if (document.selection && document.selection.type != "Control") {
+                    text = document.selection.createRange().text;
+                }
+                return text;
+            }
+    
+            var customPopup = document.getElementById("custom-popup");
+            var currentTranslation = document.getElementById('current-translation');
+    
+            document.getElementById('topofscroll').onmouseup = function (ev) {
+                if (getSelectionText().length > 0) {
+                    console.log({ ev })
+    
+                    customPopup.style.display = "inline";
+                    customPopup.style.left = ev.pageX - 20 + "px";
+                    customPopup.style.top = Number(ev.pageY) + 20 + "px";
+    
+                    translate();
+    
+                    document.getElementById('close-button').onclick = function (ev) {
+                        customPopup.style.display = "none";
+                    }
+    
+                    customPopup.onclick = function (ev) {
+                        ev.stopPropagation()
+                    }
+    
+                    document.body.onclick = function (ev) {
+                        // alert('1');
+                        // customPopup.style.display = "none";
+                    }
+                }
+            }
+    
+            document.getElementById('fromlanguage').onclick = function (ev) {
+                $('#fromlanguage .dropdown-toggle').dropdown('toggle')
+            }
+    
+            document.getElementById('tolanguage').onclick = function (ev) {
+                $('#tolanguage .dropdown-toggle').dropdown('toggle')
+            }
+    
+            function translate() {
+                currentTranslation.innerText = "Translating...";
+    
+                let post = JSON.stringify({
+                    src: $('#fromlanguage .dropdown-menu .active').attr('data-lang'),
+                    tgt: $('#tolanguage .dropdown-menu .active').attr('data-lang'),
+                    alt: "",
+                    use_multi: "multi",
+                    text: getSelectionText()
+                })
+    
+                const url = "https://nmt-api.umuganda.digital/api/v1/translate/"
+    
+                let xhr = new XMLHttpRequest()
+    
+                xhr.open('POST', url, true)
+                xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+                xhr.send(post);
+                xhr.onload = function () {
+                    if (xhr.response) {
+                        var responseData = JSON.parse(xhr.response);
+                        currentTranslation.innerText = responseData.translation;
+                    }
+                }
             }
         </script>
     </body>

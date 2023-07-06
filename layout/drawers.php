@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A drawer based layout for the ting theme.
+ * A drawer based layout for the atingi theme.
  *
- * @package   theme_ting
+ * @package   theme_atingi
  * @copyright 2021 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -96,6 +96,18 @@ if (strstr($selectedLanguages, ',')) {
 }
 
 $selectedLanguage = get_config('filter_translations', 'contentlanguage');
+$systemLanguage = current_language();
+$languageList = [];
+
+foreach (get_string_manager()->get_list_of_languages() as $code => $name) {
+    $array = ['name' => $code, 'lang' => $name];
+    if ($code == $systemLanguage) {
+        $array['active'] = true;
+    }
+    $languageList[] = $array;
+}
+
+$systemLanguage = ['name'=> $systemLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$systemLanguage]];
 
 foreach ($selectedLanguagesArray as $key => $selected) {
     $array = ['name' => $selected, 'lang' => get_string_manager()->get_list_of_languages()[$selected], 'active' => false];
@@ -104,6 +116,8 @@ foreach ($selectedLanguagesArray as $key => $selected) {
     }
     $selectedLanguagesArray[] =  $array;
 }
+
+// print_r($selectedLanguagesArray);
 
 $contentLanguage = ['name' => $selectedLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$selectedLanguage]];
 $setLanguageUrl = new moodle_url('/filter/translations/setcontentlanguage.php');
@@ -130,7 +144,11 @@ $templatecontext = [
     'addblockbutton' => $addblockbutton,
     'contentlanguages' => $selectedLanguagesArray,
     'contentlanguage' => $contentLanguage,
-    'setlanguageurl' => $setLanguageUrl
+    'setlanguageurl' => $setLanguageUrl,
+    'systemlanguage' => $systemLanguage,
+    'expandicon' => $OUTPUT->image_url('expandsolid', 'theme'),
+    'languages' => $languageList,
+    'languageicon' => $OUTPUT->image_url('languagesolid', 'theme'),
 ];
 
-echo $OUTPUT->render_from_template('theme_ting/drawers', $templatecontext);
+echo $OUTPUT->render_from_template('theme_atingi/drawers', $templatecontext);
