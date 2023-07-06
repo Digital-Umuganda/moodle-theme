@@ -151,4 +151,4 @@ $templatecontext = [
     'languageicon' => $OUTPUT->image_url('languagesolid', 'theme'),
 ];
 
-echo $OUTPUT->render_from_template('theme_atingi/drawers', $templatecontext);
+echo $OUTPUT->render_from_template('theme_ting/drawers', $templatecontext);
