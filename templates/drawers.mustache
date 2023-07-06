@@ -295,6 +295,7 @@
             #current-translation {
                 overflow-x:hidden;
                 overflow-y:scroll;
+                padding-bottom: 10px;
             }
         </style>
         <script>
@@ -399,7 +400,11 @@
                 xhr.onload = function () {
                     if (xhr.response) {
                         var responseData = JSON.parse(xhr.response);
-                        currentTranslation.innerText = responseData.translation;
+                        if (responseData.translation !== undefined) {
+                            currentTranslation.innerText = responseData.translation;
+                        } else {
+                            currentTranslation.innerText = 'Please choose a different language!';
+                        }
                     }
                 }
             }
