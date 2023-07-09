@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A drawer based layout for the ting theme.
+ * A drawer based layout for the atingi theme.
  *
- * @package   theme_ting
+ * @package   theme_atingi
  * @copyright 2021 Bas Brands
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -149,6 +149,8 @@ $templatecontext = [
     'expandicon' => $OUTPUT->image_url('expandsolid', 'theme'),
     'languages' => $languageList,
     'languageicon' => $OUTPUT->image_url('languagesolid', 'theme'),
+    'maximizeicon' => $OUTPUT->image_url('maximizesolid', 'theme'),
+    'minimizeicon' => $OUTPUT->image_url('minimizesolid', 'theme'),
 ];
 
-echo $OUTPUT->render_from_template('theme_ting/drawers', $templatecontext);
+echo $OUTPUT->render_from_template('theme_atingi/drawers', $templatecontext);
