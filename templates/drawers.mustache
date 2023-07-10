@@ -220,8 +220,8 @@ Example context (json):
                             </div>
                         </div>
                         <div class="dropdown tolanguage" style="z-index: inherit;">
-                            <span style="color: red;" class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
+                            <span style="color: red;" class="dropdown-toggle" id="tolanguagedropdowntoggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{{contentlanguage.lang}}}
                             </span>
                             <div class="dropdown-menu tolanguagedropdown" id="tolanguagedropdown"
@@ -259,11 +259,12 @@ Example context (json):
                     <div class="mt-4">
                         <span class="text-muted" style="font-size: 12px; font-weight:bold;">To: </span>
                         <div class="dropdown tolanguage" style="z-index: inherit;">
-                            <span style="color: red;" class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
+                            <span style="color: red;" class="dropdown-toggle" id="extendedtolanguagedropdowntoggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{{contentlanguage.lang}}}
                             </span>
-                            <div class="dropdown-menu tolanguagedropdown" aria-labelledby="dropdownMenu2">
+                            <div class="dropdown-menu tolanguagedropdown" aria-labelledby="dropdownMenu2"
+                                id="expandedtolanguagedropdown">
                                 {{#contentlanguages}}
                                 <a class="dropdown-item {{#active}}active{{/active}}" href="#"
                                     data-lang="{{name}}">{{lang}}</a>
@@ -355,6 +356,14 @@ Example context (json):
             target.classList.add('active');
         }
 
+        function getActiveDropdownMenu(dropdownMenu) {
+            for (const dropdownMenuItem of dropdownMenu.children) {
+                if (dropdownMenuItem.classList.contains('active')) {
+                    return dropdownMenuItem;
+                }
+            }
+        }
+
         var contentLanguageEl = document.getElementsByClassName('content-language');
 
         contentLanguageEl[0].onclick = function (ev) {
@@ -366,14 +375,18 @@ Example context (json):
             setDropdownMenuAsActive(ev);
         }
 
-        document.getElementsByClassName('tolanguagedropdown').forEach(function (element) {
-            element.onclick = function (ev) {
-                console.log({ ev, element })
-                setDropdownMenuAsActive(ev);
-                element.hidden = true;
-                translate();
-            }
-        })
+        document.getElementById('tolanguagedropdown').onclick = function (ev) {
+            setDropdownMenuAsActive(ev);
+            ev.srcElement.parentElement.hidden = true;
+            translate('initial', getActiveDropdownMenu(ev.srcElement.parentElement).getAttribute('data-lang'));
+        }
+
+        document.getElementById('expandedtolanguagedropdown').onclick = function (ev) {
+            setDropdownMenuAsActive(ev);
+            ev.srcElement.parentElement.hidden = true;
+            getActiveDropdownMenu(ev.srcElement.parentElement);
+            translate('expanded', getActiveDropdownMenu(ev.srcElement.parentElement).getAttribute('data-lang'));
+        }
 
         function getSelectionText() {
             var text = "";
@@ -404,7 +417,7 @@ Example context (json):
                     customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
                 }
 
-                translate();
+                translate('initial', getActiveDropdownMenu(document.getElementById('tolanguagedropdown')).getAttribute('data-lang'));
 
                 document.getElementById('close-button').onclick = function (ev) {
                     customPopup.style.display = "none";
@@ -428,7 +441,7 @@ Example context (json):
                     document.getElementById('translation-container').style.backgroundColor = '#c9c7c7e5';
                     customPopup.style.removeProperty('left');
                     customPopup.style.right = 20 + "px";
-                    customPopup.style.top = 140 + "px";
+                    customPopup.style.top = 100 + "px";
 
                     currentTranslation.classList.add('p-3');
                 }
@@ -463,18 +476,21 @@ Example context (json):
             $('#fromlanguage .dropdown-toggle').dropdown('toggle')
         }
 
-        document.getElementsByClassName('tolanguage').forEach(function (element) {
-            element.onclick = function (ev) {
-                $('.tolanguage .dropdown-toggle').dropdown('toggle')
-            }
-        });
+        document.getElementById('extendedtolanguagedropdowntoggle').onclick = function (ev) {
+            $(this).dropdown('toggle')
+        }
 
-        function translate() {
+        document.getElementById('tolanguagedropdowntoggle').onclick = function (ev) {
+            $(this).dropdown('toggle')
+        }
+
+        function translate(state, targetLanguage) {
+            console.log({ targetLanguage });
             currentTranslation.innerText = "Translating...";
 
             let post = JSON.stringify({
                 src: document.getElementById('systemlanguage').value,
-                tgt: $('.tolanguage .dropdown-menu .active').attr('data-lang'),
+                tgt: targetLanguage,
                 alt: "",
                 use_multi: "multi",
                 text: selectedText
@@ -491,7 +507,11 @@ Example context (json):
             xhr.onload = function () {
                 if (xhr.response) {
                     var responseData = JSON.parse(xhr.response);
-                    currentTranslation.innerText = responseData.translation;
+                    if (responseData.translation) {
+                        currentTranslation.innerText = responseData.translation;
+                    } else if (responseData.detail) {
+                        currentTranslation.innerText = responseData.detail;
+                    }
                 }
             }
         }
