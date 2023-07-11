@@ -91,7 +91,7 @@ Example context (json):
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto ml-6">
+                        {{! <ul class="navbar-nav mr-auto ml-6">
                             <li class="nav-item active ml-6">
                                 <a class="nav-link" href="#">Menu 1 <span class="sr-only">(current)</span></a>
                             </li>
@@ -101,7 +101,7 @@ Example context (json):
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Menu 3</a>
                             </li>
-                        </ul>
+                        </ul> }}
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item">
                                 <span class="nav-link disabled">Select course language:<span />
@@ -344,14 +344,44 @@ Example context (json):
             var dropdownMenu = target.parentNode;
             var dropdown = dropdownMenu.parentNode;
             var dropdownTitle = dropdown.children[0];
+
             dropdownTitle.innerText = target.innerText;
-            console.log({ ev, target: ev.target, parent: ev.target.parentNode, title: dropdown.children[0] })
 
             dropdownMenu.children.forEach(menu => {
                 if (menu.classList.contains('active')) {
                     menu.classList.remove('active')
                 }
             });
+
+            target.classList.add('active');
+
+            if (dropdownMenu.id == 'tolanguagedropdown') {
+                var altMenu = document.getElementById('expandedtolanguagedropdown');
+                var altTitle = document.getElementById('extendedtolanguagedropdowntoggle');
+                altTitle.innerText = target.innerText;
+
+                altMenu.children.forEach(menu => {
+                    if (menu.classList.contains('active')) {
+                        menu.classList.remove('active')
+                    } else if (menu.getAttribute('data-lang') == target.getAttribute('data-lang')) {
+                        menu.classList.add('active');
+                    }
+                });
+            } else if (dropdownMenu.id == 'expandedtolanguagedropdown') {
+                var altMenu = document.getElementById('tolanguagedropdown');
+                var altTitle = document.getElementById('tolanguagedropdowntoggle');
+                altTitle.innerText = target.innerText;
+
+                altMenu.children.forEach(menu => {
+                    if (menu.classList.contains('active')) {
+                        menu.classList.remove('active')
+                    } else if (menu.getAttribute('data-lang') == target.getAttribute('data-lang')) {
+                        menu.classList.add('active');
+                    }
+                });
+            }
+
+            console.log({ ev, target: ev.target, parent: ev.target.parentNode, title: dropdown.children[0] })
 
             target.classList.add('active');
         }
@@ -477,10 +507,12 @@ Example context (json):
         }
 
         document.getElementById('extendedtolanguagedropdowntoggle').onclick = function (ev) {
+            document.getElementById('expandedtolanguagedropdown').hidden = false;
             $(this).dropdown('toggle')
         }
 
         document.getElementById('tolanguagedropdowntoggle').onclick = function (ev) {
+            document.getElementById('tolanguagedropdown').hidden = false;
             $(this).dropdown('toggle')
         }
 
