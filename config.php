@@ -59,6 +59,16 @@ $THEME->scss = function ($theme) {
 $THEME->prescsscallback = 'theme_boost_get_pre_scss';
 
 $THEME->layouts = array(
+    'base' => array(
+        'file' => 'drawers.php',
+        'regions' => array(),
+    ),
+    // Standard layout with blocks.
+    'standard' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
     // Main course page.
     'course' => array(
         'file' => 'course.php',
@@ -66,17 +76,48 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
+    'coursecategory' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
     // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
         'file' => 'course.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
+    // The site home page.
+    'frontpage' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true),
+    ),
+    // Server administration scripts.
+    'admin' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
     // My courses page.
-    /* 'mycourses' => array(
-        'file' => 'course.php',
+    'mycourses' => array(
+        'file' => 'drawers.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
-    ) */
+    ),
+    // My dashboard page.
+    'mydashboard' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+        'options' => array('nonavbar' => true, 'langmenu' => true),
+    ),
+    // My public page.
+    'mypublic' => array(
+        'file' => 'drawers.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 );
