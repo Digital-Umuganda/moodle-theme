@@ -9,7 +9,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // The first setting we need is the name of the theme. This should be the last part of the component name, and the same             
 // as the directory name for our theme.                                                                                             
-$THEME->name = 'ting';
+$THEME->name = 'atingi';
 
 // This setting list the style sheets we want to include in our theme. Because we want to use SCSS instead of CSS - we won't        
 // list any style sheets. If we did we would list the name of a file in the /style/ folder for our theme without any css file      
@@ -59,65 +59,24 @@ $THEME->scss = function ($theme) {
 $THEME->prescsscallback = 'theme_boost_get_pre_scss';
 
 $THEME->layouts = array(
-    'base' => array(
-        'file' => 'drawers.php',
-        'regions' => array(),
-    ),
-    // Standard layout with blocks.
-    'standard' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-    ),
     // Main course page.
     'course' => array(
-        'file' => 'drawers.php',
+        'file' => 'course.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
-    'coursecategory' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-    ),
     // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-    ),
-    // The site home page.
-    'frontpage' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-        'options' => array('nonavbar' => true),
-    ),
-    // Server administration scripts.
-    'admin' => array(
-        'file' => 'drawers.php',
+        'file' => 'course.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
     // My courses page.
-    'mycourses' => array(
-        'file' => 'drawers.php',
+    /* 'mycourses' => array(
+        'file' => 'course.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
-    ),
-    // My dashboard page.
-    'mydashboard' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-        'options' => array('nonavbar' => true, 'langmenu' => true),
-    ),
-    // My public page.
-    'mypublic' => array(
-        'file' => 'drawers.php',
-        'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre',
-    ),
+    ) */
 );
