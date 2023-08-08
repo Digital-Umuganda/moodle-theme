@@ -199,6 +199,7 @@
                 </div>
                 {{{ output.standard_after_main_region_html }}}
                 <input type="hidden" id="url" value="{{{setlanguageurl}}}">
+                <input type="hidden" id="widgeturl" value="{{{setwidgetlanguageurl}}}">
                 <input type="hidden" id="systemlanguage" value="{{{systemlanguage.name}}}">
                 <input type="hidden" id="contentlanguage" value="{{{contentlanguage.name}}}">
                 <div class="custom-popup" id="custom-popup" style="min-height: 4rem; overflow-x:auto;overflow-y:hidden;">
@@ -222,7 +223,7 @@
                             <div class="dropdown tolanguage" style="z-index: inherit;">
                                 <span style="color: red;" class="dropdown-toggle" id="tolanguagedropdowntoggle"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{{contentlanguage.lang}}}
+                                    {{{widgetlanguage.lang}}}
                                 </span>
                                 <div class="dropdown-menu tolanguagedropdown" id="tolanguagedropdown"
                                     aria-labelledby="dropdownMenu2">
@@ -261,7 +262,7 @@
                             <div class="dropdown tolanguage" style="z-index: inherit;">
                                 <span style="color: red;" class="dropdown-toggle" id="extendedtolanguagedropdowntoggle"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{{contentlanguage.lang}}}
+                                    {{{widgetlanguage.lang}}}
                                 </span>
                                 <div class="dropdown-menu tolanguagedropdown" aria-labelledby="dropdownMenu2"
                                     id="expandedtolanguagedropdown">
@@ -407,12 +408,14 @@
     
             document.getElementById('tolanguagedropdown').onclick = function (ev) {
                 setDropdownMenuAsActive(ev);
+                setWidgetLanguage(ev.srcElement.getAttribute('data-lang'));
                 ev.srcElement.parentElement.hidden = true;
                 translate('initial', getActiveDropdownMenu(ev.srcElement.parentElement).getAttribute('data-lang'));
             }
     
             document.getElementById('expandedtolanguagedropdown').onclick = function (ev) {
                 setDropdownMenuAsActive(ev);
+                setWidgetLanguage(ev.srcElement.getAttribute('data-lang'));
                 ev.srcElement.parentElement.hidden = true;
                 getActiveDropdownMenu(ev.srcElement.parentElement);
                 translate('expanded', getActiveDropdownMenu(ev.srcElement.parentElement).getAttribute('data-lang'));
@@ -546,6 +549,13 @@
                         }
                     }
                 }
+            }
+    
+            function setWidgetLanguage(widgetLanguage) {
+                // location.assign(document.getElementById('widgeturl').value + "?lang=" + widgetLanguage);
+                let xhr = new XMLHttpRequest()
+                xhr.open('GET', document.getElementById('widgeturl').value + "?lang=" + widgetLanguage, true)
+                xhr.send();
             }
         </script>
     </body>

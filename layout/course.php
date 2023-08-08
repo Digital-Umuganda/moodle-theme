@@ -111,7 +111,7 @@ $systemLanguage = ['name'=> $systemLanguage, 'lang' => get_string_manager()->get
 
 foreach ($selectedLanguagesArray as $key => $selected) {
     $array = ['name' => $selected, 'lang' => get_string_manager()->get_list_of_languages()[$selected], 'active' => false];
-    if ($selectedLanguage == $selected) {
+    if (get_config('filter_translations', 'widgetlanguage') == $selected) {
         $array['active'] = true;
     }
     $selectedLanguagesArray[] =  $array;
@@ -120,7 +120,9 @@ foreach ($selectedLanguagesArray as $key => $selected) {
 // print_r($selectedLanguagesArray);
 
 $contentLanguage = ['name' => $selectedLanguage, 'lang' => get_string_manager()->get_list_of_languages()[$selectedLanguage]];
+$widgetLanguage = ['name' => get_config('filter_translations', 'widgetlanguage'), 'lang' => get_string_manager()->get_list_of_languages()[get_config('filter_translations', 'widgetlanguage')]];
 $setLanguageUrl = new moodle_url('/filter/translations/setcontentlanguage.php');
+$setWidgetLanguageUrl = new moodle_url('/filter/translations/setwidgetlanguage.php');
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -145,12 +147,14 @@ $templatecontext = [
     'contentlanguages' => $selectedLanguagesArray,
     'contentlanguage' => $contentLanguage,
     'setlanguageurl' => $setLanguageUrl,
+    'setwidgetlanguageurl' => $setWidgetLanguageUrl,
     'systemlanguage' => $systemLanguage,
     'expandicon' => $OUTPUT->image_url('expandsolid', 'theme'),
     'languages' => $languageList,
     'languageicon' => $OUTPUT->image_url('languagesolid', 'theme'),
     'maximizeicon' => $OUTPUT->image_url('maximizesolid', 'theme'),
     'minimizeicon' => $OUTPUT->image_url('minimizesolid', 'theme'),
+    'widgetlanguage' => $widgetLanguage,
 ];
 
 echo $OUTPUT->render_from_template('theme_atingi/course', $templatecontext);
