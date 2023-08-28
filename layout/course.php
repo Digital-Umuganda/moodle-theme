@@ -155,6 +155,7 @@ $templatecontext = [
     'maximizeicon' => $OUTPUT->image_url('maximizesolid', 'theme'),
     'minimizeicon' => $OUTPUT->image_url('minimizesolid', 'theme'),
     'widgetlanguage' => $widgetLanguage,
+    'usepopuptranslation' => get_config('filter_translations', 'usepopuptranslation') == 1 ? true : false
 ];
 
 echo $OUTPUT->render_from_template('theme_atingi/course', $templatecontext);
