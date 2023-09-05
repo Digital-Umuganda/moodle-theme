@@ -110,8 +110,8 @@ Example context (json):
                                 <div class="nav-link">
                                     <!-- Rounded switch -->
                                     <label class="switch">
-                                        <input type="checkbox" id="toggle"
-                                            {{#usepopuptranslation}}checked{{/usepopuptranslation}}>
+                                        <input type="hidden" id="usepopuptranslation" value="{{usepopuptranslation}}" />
+                                        <input type="checkbox" id="toggle" />
                                         <span class="slider round"></span>
                                     </label>
                                 </div>
@@ -478,9 +478,12 @@ Example context (json):
             location.assign(document.getElementById('url').value + '?lang=' + ev.target.getAttribute('data-lang') + "&target=contentlanguage&redirectto=" + location.href);
         }
 
+        var localUsePopupTranslation = localStorage.getItem('usepopuptranslation');
+
         document.getElementById('toggle').onchange = function (ev) {
             var state = ev.target.checked ? "1" : "2";
-            location.assign(document.getElementById('url').value + '?state=' + state + "&target=showpopuptranslation&redirectto=" + location.href);
+            localStorage.setItem('usepopuptranslation', state);
+            // location.assign(document.getElementById('url').value + '?state=' + state + "&target=showpopuptranslation&redirectto=" + location.href);
         }
 
         document.getElementById('fromlanguagedropdown').onclick = function (ev) {
@@ -515,78 +518,9 @@ Example context (json):
         var customPopup = document.getElementById("custom-popup");
         var currentTranslation = document.getElementById('current-translation');
 
-        var selectedText = "";
+        // var selectedText = "";
         var selectedTextPosition = { x: 0, y: 0 };
-        document.getElementById('topofscroll').onmouseup = function (ev) {
-            if (document.getElementById('toggle').checked) {
-                if (getSelectionText().length > 0) {
-                    selectedTextPosition.x = ev.pageX;
-                    selectedTextPosition.y = ev.pageY;
 
-                    selectedText = getSelectionText();
-                    document.getElementById('selected-text').innerText = selectedText;
-
-                    customPopup.style.display = "inline";
-                    if (!customPopup.classList.contains('expanded')) {
-                        customPopup.style.left = selectedTextPosition.x - 20 + "px";
-                        customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
-                    }
-
-                    translate('initial', getActiveDropdownMenu(document.getElementById('tolanguagedropdown')).getAttribute('data-lang'));
-
-                    document.getElementById('close-button').onclick = function (ev) {
-                        customPopup.style.display = "none";
-                        customPopup.classList.remove('expanded');
-                        document.getElementById('collapsed-header').hidden = false;
-                        document.getElementById('expanded-header').hidden = true;
-                        document.getElementById('expanded-section').hidden = true;
-                        document.getElementById('expanded-footer').hidden = true;
-                        document.getElementById('translation-container').style.border = 'none';
-                        currentTranslation.classList.remove('p-3');
-                        document.getElementById('translation-container').style.backgroundColor = 'white';
-                    }
-
-                    document.getElementById('expand-button').onclick = function (ev) {
-                        customPopup.classList.add('expanded');
-                        document.getElementById('collapsed-header').hidden = true;
-                        document.getElementById('expanded-header').hidden = false;
-                        document.getElementById('expanded-section').hidden = false;
-                        document.getElementById('expanded-footer').hidden = false;
-                        document.getElementById('translation-container').style.border = '1.5px solid #c9c7c7e5';
-                        document.getElementById('translation-container').style.backgroundColor = '#c9c7c7e5';
-                        customPopup.style.removeProperty('left');
-                        customPopup.style.right = 20 + "px";
-                        customPopup.style.top = 100 + "px";
-
-                        currentTranslation.classList.add('p-3');
-                    }
-
-                    document.getElementById('minimize-button').onclick = function (ev) {
-                        customPopup.classList.remove('expanded');
-                        document.getElementById('collapsed-header').hidden = false;
-                        document.getElementById('expanded-header').hidden = true;
-                        document.getElementById('expanded-section').hidden = true;
-                        document.getElementById('expanded-footer').hidden = true;
-                        document.getElementById('translation-container').style.removeProperty('border');
-                        document.getElementById('translation-container').style.backgroundColor = 'white';
-                        customPopup.style.removeProperty('right');
-                        customPopup.style.left = selectedTextPosition.x - 20 + "px";
-                        customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
-
-                        currentTranslation.classList.remove('p-3');
-                    }
-
-                    customPopup.onclick = function (ev) {
-                        ev.stopPropagation()
-                    }
-
-                    document.body.onclick = function (ev) {
-                        // alert('1');
-                        // customPopup.style.display = "none";
-                    }
-                }
-            }
-        }
 
         document.getElementById('fromlanguage').onclick = function (ev) {
             $('#fromlanguage .dropdown-toggle').dropdown('toggle')
@@ -677,6 +611,125 @@ Example context (json):
                 alert("Selected Text:", selectedText);
             }
         });
+
+        window.onload = function () {
+            var usePopupTranslationToggle = document.getElementById('toggle');
+            var usePopupTranslation = document.getElementById('usepopuptranslation').value;
+
+            if (localUsePopupTranslation != null) {
+                if (localUsePopupTranslation == '1') {
+                    usePopupTranslationToggle.checked = true;
+                } else {
+                    usePopupTranslationToggle.checked = false;
+                }
+            } else if (usePopupTranslation != null) {
+                if (usePopupTranslation == '1') {
+                    usePopupTranslationToggle.checked = true;
+                } else {
+                    usePopupTranslationToggle.checked = false;
+                }
+            }
+        }
+
+        /**
+        We use a setTimeout function inside the handleTextSelection function to delay the capture and use of selected text by 500 milliseconds (adjust this value as needed).
+        The selectionTimeout variable is used to keep track of the timeout.
+        When the selectionchange event is fired, we clear the existing selectionTimeout and set a new one. If the user stops selecting text for the specified duration (500 milliseconds in this demo), the selected text will be captured and used.
+        This approach prevents capturing text for each character selected and ensures that the capture occurs only when the user has completed their selection.
+        */
+
+        document.getElementById('topofscroll').onmouseup = function (ev) {
+            selectedTextPosition.x = ev.pageX;
+            selectedTextPosition.y = ev.pageY;
+        }
+
+        let selectedText = '';
+        let selectionTimeout;
+        const handleTextSelection = (ev) => {
+            console.log({ ev, selectedTextPosition });
+            clearTimeout(selectionTimeout);
+            selectionTimeout = setTimeout(() => {
+                selectedText = getSelectedText();
+                if (selectedText.length > 0) {
+                    document.getElementById('selected-text').innerText = selectedText;
+
+                    customPopup.style.display = "inline";
+                    if (!customPopup.classList.contains('expanded')) {
+                        customPopup.style.left = selectedTextPosition.x - 20 + "px";
+                        customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
+                    }
+
+                    translate('initial', getActiveDropdownMenu(document.getElementById('tolanguagedropdown')).getAttribute('data-lang'));
+
+                    document.getElementById('close-button').onclick = function (ev) {
+                        customPopup.style.display = "none";
+                        customPopup.classList.remove('expanded');
+                        document.getElementById('collapsed-header').hidden = false;
+                        document.getElementById('expanded-header').hidden = true;
+                        document.getElementById('expanded-section').hidden = true;
+                        document.getElementById('expanded-footer').hidden = true;
+                        document.getElementById('translation-container').style.border = 'none';
+                        currentTranslation.classList.remove('p-3');
+                        document.getElementById('translation-container').style.backgroundColor = 'white';
+                    }
+
+                    document.getElementById('expand-button').onclick = function (ev) {
+                        customPopup.classList.add('expanded');
+                        document.getElementById('collapsed-header').hidden = true;
+                        document.getElementById('expanded-header').hidden = false;
+                        document.getElementById('expanded-section').hidden = false;
+                        document.getElementById('expanded-footer').hidden = false;
+                        document.getElementById('translation-container').style.border = '1.5px solid #c9c7c7e5';
+                        document.getElementById('translation-container').style.backgroundColor = '#c9c7c7e5';
+                        customPopup.style.removeProperty('left');
+                        customPopup.style.right = 20 + "px";
+                        customPopup.style.top = 100 + "px";
+
+                        currentTranslation.classList.add('p-3');
+                    }
+
+                    document.getElementById('minimize-button').onclick = function (ev) {
+                        customPopup.classList.remove('expanded');
+                        document.getElementById('collapsed-header').hidden = false;
+                        document.getElementById('expanded-header').hidden = true;
+                        document.getElementById('expanded-section').hidden = true;
+                        document.getElementById('expanded-footer').hidden = true;
+                        document.getElementById('translation-container').style.removeProperty('border');
+                        document.getElementById('translation-container').style.backgroundColor = 'white';
+                        customPopup.style.removeProperty('right');
+                        customPopup.style.left = selectedTextPosition.x - 20 + "px";
+                        customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
+
+                        currentTranslation.classList.remove('p-3');
+                    }
+
+                    customPopup.onclick = function (ev) {
+                        ev.stopPropagation()
+                    }
+
+                    document.body.onclick = function (ev) {
+                        // alert('1');
+                        // customPopup.style.display = "none";
+                    }
+
+                    //if (selectedText) {
+                    // Play action you want here I just alerted it
+                    //alert(`Selected Text: ${selectedText}`);
+                    //}
+                }
+            }, 500); // can be incremented or decremented 
+        };
+
+        // Event listener for selectionchange
+        document.addEventListener('selectionchange', handleTextSelection);
+        // Function to get the selected text
+        const getSelectedText = () => {
+            let text = '';
+            if (window.getSelection) {
+                text = window.getSelection().toString();
+            }
+            return text;
+        };
             // }
     </script>
 </body>
