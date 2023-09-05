@@ -579,39 +579,6 @@
                 return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
             }
     
-            // function selectTextOnMobile() {
-            // Assuming you have a target element with id "text-container"
-            const textContainer = document.getElementById("topofscroll");
-    
-            let touchStartX, touchStartY;
-    
-            textContainer.addEventListener("touchstart", (event) => {
-                const touch = event.touches[0];
-                console.log({ touch })
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-            });
-    
-            textContainer.addEventListener("touchend", (event) => {
-                console.log({ touchStartX, touchStartY });
-    
-                const touch = event.changedTouches[0];
-                const touchEndX = touch.clientX;
-                const touchEndY = touch.clientY;
-    
-                document.addEventListener("selectionchange", function (e) {
-                    //do something, e.g. document.getSelection()        
-                    console.log("selectionchange")
-                    const selectedText = getSelectionText();
-                    console.log("Selected Text:", selectedText);
-                });
-    
-                if (touchStartX !== touchEndX || touchStartY !== touchEndY) {
-                    const selectedText = getSelectionText();
-                    alert("Selected Text:", selectedText);
-                }
-            });
-    
             window.onload = function () {
                 var usePopupTranslationToggle = document.getElementById('toggle');
                 var usePopupTranslation = document.getElementById('usepopuptranslation').value;
@@ -655,8 +622,13 @@
     
                         customPopup.style.display = "inline";
                         if (!customPopup.classList.contains('expanded')) {
-                            customPopup.style.left = selectedTextPosition.x - 20 + "px";
-                            customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
+                            if (isTouchDevice()) {
+                                customPopup.style.bottom = "0px";
+                                customPopup.style.right = "0px";
+                            } else {
+                                customPopup.style.left = selectedTextPosition.x - 20 + "px";
+                                customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
+                            }
                         }
     
                         translate('initial', getActiveDropdownMenu(document.getElementById('tolanguagedropdown')).getAttribute('data-lang'));
