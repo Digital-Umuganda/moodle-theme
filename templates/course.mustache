@@ -622,9 +622,10 @@
     
                         customPopup.style.display = "inline";
                         if (!customPopup.classList.contains('expanded')) {
-                            if (isTouchDevice()) {
+                            if (isMobile()) {
                                 customPopup.style.bottom = "0px";
                                 customPopup.style.right = "0px";
+                                customPopup.style.width = "100%";
                             } else {
                                 customPopup.style.left = selectedTextPosition.x - 20 + "px";
                                 customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
@@ -656,6 +657,7 @@
                             customPopup.style.removeProperty('left');
                             customPopup.style.right = 20 + "px";
                             customPopup.style.top = 100 + "px";
+                            if (isMobile()) customPopup.style.width = "100%";
     
                             currentTranslation.classList.add('p-3');
                         }
@@ -671,6 +673,7 @@
                             customPopup.style.removeProperty('right');
                             customPopup.style.left = selectedTextPosition.x - 20 + "px";
                             customPopup.style.top = Number(selectedTextPosition.y) + 20 + "px";
+                            // customPopup.style.width = "20rem";
     
                             currentTranslation.classList.remove('p-3');
                         }
@@ -702,6 +705,19 @@
                 }
                 return text;
             };
+    
+            function isMobile() {
+                if (navigator.userAgent.match(/Android/i)
+                    || navigator.userAgent.match(/webOS/i)
+                    || navigator.userAgent.match(/iPhone/i)
+                    || navigator.userAgent.match(/iPad/i)
+                    || navigator.userAgent.match(/iPod/i)
+                    || navigator.userAgent.match(/BlackBerry/i)
+                    || navigator.userAgent.match(/Windows Phone/i)) {
+                    return true;
+                }
+                return false;
+            }
             // }
         </script>
     </body>
